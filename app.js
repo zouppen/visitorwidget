@@ -42,7 +42,6 @@ createApp({
 	postmaster(msg) {
 	    if (msg.data.api === "fromWidget" && msg.data.response !== undefined) {
 		// This is answer to us
-		console.log("Processing response", msg)
 		const handler = {
 		    "org.matrix.msc2876.read_events": this.handleEvents,
 		}[msg.data.action] ?? function () {
@@ -51,7 +50,6 @@ createApp({
 		handler(msg)
 	    } else if (msg.data.api === "toWidget" && msg.data.response === undefined) {
 		// We got incoming information.
-		console.log("Processing request", msg)
 		const handler = {
 		    capabilities: this.askCapabilities,
 		    notify_capabilities: this.checkCapabilities,
