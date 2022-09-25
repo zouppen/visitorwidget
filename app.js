@@ -65,17 +65,30 @@ createApp({
 	    event.source.postMessage(event.data, "*")
 
 	    // Collect references for later use.
-	    this.chatWindow = event.source
-
-	    // Temporary hack to show something
-	    this.lab.loading = false
-	    this.lab.present = []
+	    this.chat = event.source
+	},
+	askEvents(type, limit=1) {
+	    // Ask for the most recent message of given type
+	    this.chat.postMessage({
+		api: "fromWidget",
+		widgetId: this.widgetId,
+		requestId: self.crypto.randomUUID(),
+		action: "org.matrix.msc2876.read_events",
+		data: {
+		    "type": type,
+		    "limit": limit
+		}
+	    }, "*")
 	},
 	checkCapabilities(event) {
 	    const granted = caps.every((cap) => event.data.data.approved.includes(cap))
 	    if (granted) {
 		// Matrix mode activated
 		this.source = "Matrix"
+
+		// Now we're asking the initial state
+		this.askEvents("fi.hacklab.venue")
+		this.askEvents("fi.hacklab.visitors")
 	    } else {
 		this.source = "REST API (Matrix-käyttöoikeus puuttuu)"
 		this.startLegacyFetch()
