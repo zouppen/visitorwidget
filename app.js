@@ -14,16 +14,16 @@ createApp({
     },
     created() {
 	// Fetch once at init and then start a 60s interval timer
-	this.fetchData()
+	this.legacyFetchData()
 	var that = this
 	setInterval(function () {
-	    that.fetchData.apply(that)
+	    that.legacyFetchData.apply(that)
 	}, 60000)
 	// Start listening to Matrix client events
 	window.addEventListener("message", this.matrixIncoming, false);
     },
     methods: {
-	async fetchData() {
+	async legacyFetchData() {
 	    this.lab = await (await fetch(API_URL)).json()
 	    this.lab.loading = false
 	},
