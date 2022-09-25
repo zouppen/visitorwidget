@@ -21,7 +21,7 @@ createApp({
 	    this.startLegacyFetch()
 	} else {
 	    // Matrix mode: receiving events via Matrix.
-	    window.addEventListener("message", this.matrixIncoming, false)
+	    window.addEventListener("message", this.postmaster, false)
 	    // The first message should be capabilities, hopefully
 	    // continuing from there.
 	}
@@ -39,30 +39,30 @@ createApp({
 	    // Do initial data fetch
 	    updateVisitors()
 	},
-	matrixIncoming(event) {
-	    if (event.data.api === "fromWidget" && event.data.response !== undefined) {
+	postmaster(msg) {
+	    if (msg.data.api === "fromWidget" && msg.data.response !== undefined) {
 		// This is answer to us
-		console.log("Processing response", event)
+		console.log("Processing response", msg)
 		const handler = {
 		    "org.matrix.msc2876.read_events": this.handleEvents,
-		}[event.data.action] ?? function () {
-		    console.log("No handler for this response", event)
+		}[msg.data.action] ?? function () {
+		    console.log("No handler for this response", msg)
 		}
-		handler(event)
-	    } else if (event.data.api === "toWidget" && event.data.response === undefined) {
+		handler(msg)
+	    } else if (msg.data.api === "toWidget" && msg.data.response === undefined) {
 		// We got incoming information.
-		console.log("Processing request", event)
+		console.log("Processing request", msg)
 		const handler = {
 		    capabilities: this.askCapabilities,
 		    notify_capabilities: this.checkCapabilities,
 		    send_event: this.handleEventPush,
-		}[event.data.action] ?? function () {
-		    console.log("No handler for this request", event)
+		}[msg.data.action] ?? function () {
+		    console.log("No handler for this request", msg)
 		}
-		handler(event)
+		handler(msg)
 	    } else {
 		// Either echo from postMessage or something else
-		console.log("Visitor widget got unsolisited event", event)
+		console.log("Visitor widget got unsolisited event", msg)
 	    }
 	},
 	askCapabilities(event) {
