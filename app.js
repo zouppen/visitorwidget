@@ -42,16 +42,22 @@ createApp({
 	matrixIncoming(event) {
 	    if (event.data.api === "fromWidget" && event.data.response !== undefined) {
 		// This is answer to us
-		console.log("We got response, TODO process it", event)
+		console.log("Processing response", event)
+		const handler = {
+		    "org.matrix.msc2876.read_events": this.handleEvents,
+		}[event.data.action] ?? function () {
+		    console.log("No handler for this response", event)
+		}
+		handler(event)
 	    } else if (event.data.api === "toWidget" && event.data.response === undefined) {
 		// We got incoming information.
-		console.log("Processing incoming event", event)
+		console.log("Processing request", event)
 		const handler = {
 		    capabilities: this.askCapabilities,
 		    notify_capabilities: this.checkCapabilities,
-		    send_event: this.incomingEvent,
+		    send_event: this.handleEventPush,
 		}[event.data.action] ?? function () {
-		    console.log("No handler for this action", event)
+		    console.log("No handler for this request", event)
 		}
 		handler(event)
 	    } else {
@@ -96,6 +102,19 @@ createApp({
 	    // Sending ack
 	    event.data.response = {success: true}
 	    event.source.postMessage(event.data, "*")
+	},
+	handleEvents(event) {
+	    // Initial information asked. Dig the stuff and pass on.
+	    for (const e of event.data.response.events) {
+		this.handleEvent(e)
+	    }
+	},
+	handleEventPush(event) {
+	    // We got a lab state change. Pass to the actual parser.
+	    this.handleEvent(event.data.data)
+	},
+	handleEvent(event) {
+	    console.log("Noniin.", event);
 	}
     }
 }).mount('#app')
