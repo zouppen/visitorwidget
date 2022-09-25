@@ -5,7 +5,7 @@ createApp({
     data() {
 	return {
 	    lab: { loading: true },
-	    jsdebug: "Huolletaan widgettiä, v1"
+	    source: "REST API"
 	}
     },
     created() {
@@ -24,23 +24,39 @@ createApp({
 	    this.lab.loading = false
 	},
 	matrixIncoming(event) {
-	    if (event.origin !== "vector://vector") {
+	    if (event.data.api === "fromWidget" && event.data.response !== undefined) {
+		// This is answer to us
+		console.log("We got response, TODO process it", event)
+	    } else if (event.data.api === "toWidget" && event.data.response === undefined) {
+		// We got incoming information.
+		console.log("Processing incoming event", event)
+		const handler = {
+		    capabilities : this.tellCapabilities,
+		    notify_capabilities: this.checkCapabilities,
+		}[event.data.action] ?? function () {
+		    console.log("No handler for this action", event)
+		}
+		handler(event)
+	    } else {
+		// Either echo from postMessage or something else
 		console.log("Visitor widget got unsolisited event", event)
-		return
 	    }
-
-	    const handler = {
-		capabilities : this.tellCapabilities,
-	    }[event.data.action];	    
-	    if (handler === undefined) {
-		console.log("Visitor widget cannot process "+event.action, event)
-		return
-	    }
-
-	    handler(event)
 	},
 	tellCapabilities(event) {
-	    console.log("Ominaisuuksia kerrotaan", event)
+	    // Telling we want the messages
+	    event.data.response = { capabilities: ["m.capability.request_messages"] };
+	    event.source.postMessage(event.data, "*");
+	},
+	checkCapabilities(event) {
+	    if (event.data.data.approved.includes("m.capability.request_messages")) {
+		// Matrix mode activated
+		this.source = "Matrix"
+	    } else {
+		this.source = "REST API (Matrix-käyttöoikeus puuttuu)"
+	    }
+	    // Sending ack
+	    event.data.response = {}
+	    event.source.postMessage(event.data, "*")
 	}
     }
 }).mount('#app')
