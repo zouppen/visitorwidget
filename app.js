@@ -65,13 +65,13 @@ createApp({
 		console.log("Visitor widget got unsolisited event", msg)
 	    }
 	},
-	askCapabilities(event) {
+	askCapabilities(msg) {
 	    // Telling we want the messages
-	    event.data.response = { capabilities: caps }
-	    event.source.postMessage(event.data, "*")
+	    msg.data.response = { capabilities: caps }
+	    msg.source.postMessage(msg.data, "*")
 
 	    // Collect references for later use.
-	    this.chat = event.source
+	    this.chat = msg.source
 	},
 	askEvents(type, limit=1) {
 	    // Ask for the most recent message of given type
@@ -86,8 +86,8 @@ createApp({
 		}
 	    }, "*")
 	},
-	checkCapabilities(event) {
-	    const granted = caps.every((cap) => event.data.data.approved.includes(cap))
+	checkCapabilities(msg) {
+	    const granted = caps.every((cap) => msg.data.data.approved.includes(cap))
 	    if (granted) {
 		// Matrix mode activated
 		this.source = "Matrix"
@@ -100,18 +100,18 @@ createApp({
 		this.startLegacyFetch()
 	    }
 	    // Sending ack
-	    event.data.response = {success: true}
-	    event.source.postMessage(event.data, "*")
+	    msg.data.response = {success: true}
+	    msg.source.postMessage(msg.data, "*")
 	},
-	handleEvents(event) {
+	handleEvents(msg) {
 	    // Initial information asked. Dig the stuff and pass on.
-	    for (const e of event.data.response.events) {
-		this.handleEvent(e)
+	    for (const event of msg.data.response.events) {
+		this.handleEvent(event)
 	    }
 	},
-	handleEventPush(event) {
+	handleEventPush(msg) {
 	    // We got a lab state change. Pass to the actual parser.
-	    this.handleEvent(event.data.data)
+	    this.handleEvent(msg.data.data)
 	},
 	handleEvent(event) {
 	    console.log("Noniin.", event);
