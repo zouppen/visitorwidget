@@ -1,5 +1,9 @@
 const API_URL = 'https://visitors.jkl.hacklab.fi/api/v1/visitors?format=json-v2'
 const { createApp } = Vue
+const caps = [
+    "org.matrix.msc2762.receive.event:fi.hacklab.venue",
+    "org.matrix.msc2762.receive.event:fi.hacklab.visitors",
+]
 
 createApp({
     data() {
@@ -31,7 +35,7 @@ createApp({
 		// We got incoming information.
 		console.log("Processing incoming event", event)
 		const handler = {
-		    capabilities : this.tellCapabilities,
+		    capabilities: this.tellCapabilities,
 		    notify_capabilities: this.checkCapabilities,
 		}[event.data.action] ?? function () {
 		    console.log("No handler for this action", event)
@@ -44,7 +48,7 @@ createApp({
 	},
 	tellCapabilities(event) {
 	    // Telling we want the messages
-	    event.data.response = { capabilities: ["m.capability.request_messages"] }
+	    event.data.response = { capabilities: caps }
 	    event.source.postMessage(event.data, "*")
 
 	    // Collect references for later use.
@@ -52,7 +56,8 @@ createApp({
 	    this.chatWindow = event.source
 	},
 	checkCapabilities(event) {
-	    if (event.data.data.approved.includes("m.capability.request_messages")) {
+	    const granted = caps.every((cap) => event.data.data.approved.includes(cap));
+	    if (granted) {
 		// Matrix mode activated
 		this.source = "Matrix"
 	    } else {
