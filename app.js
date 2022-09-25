@@ -13,14 +13,23 @@ createApp({
 	}
     },
     created() {
-	// Fetch once at init and then start a 60s interval timer
-	this.legacyFetchData()
-	var that = this
-	setInterval(function () {
-	    that.legacyFetchData.apply(that)
-	}, 60000)
-	// Start listening to Matrix client events
-	window.addEventListener("message", this.matrixIncoming, false);
+	// Let's find out if we've got blue or red pill.
+	const params = new URLSearchParams(document.location.search)
+	this.widgetId = params.get("widgetId")
+	if (this.widgetId === null) {
+	    // Using https to fetch information perioidically
+	    var that = this
+	    setInterval(function () {
+		that.legacyFetchData.apply(that)
+	    }, 60000)
+	    // Do initial data fetch
+	    this.legacyFetchData()
+	} else {
+	    // Matrix mode: receiving events via Matrix.
+	    window.addEventListener("message", this.matrixIncoming, false)
+	    // The first message should be capabilities, hopefully
+	    // continuing from there.
+	}
     },
     methods: {
 	async legacyFetchData() {
@@ -37,6 +46,7 @@ createApp({
 		const handler = {
 		    capabilities: this.askCapabilities,
 		    notify_capabilities: this.checkCapabilities,
+		    send_event: this.incomingEvent,
 		}[event.data.action] ?? function () {
 		    console.log("No handler for this action", event)
 		}
@@ -52,8 +62,11 @@ createApp({
 	    event.source.postMessage(event.data, "*")
 
 	    // Collect references for later use.
-	    this.widgetId = event.data.widgetId
 	    this.chatWindow = event.source
+
+	    // Temporary hack to show something
+	    this.lab.loading = false
+	    this.lab.present = []
 	},
 	checkCapabilities(event) {
 	    const granted = caps.every((cap) => event.data.data.approved.includes(cap))
