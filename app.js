@@ -35,7 +35,7 @@ createApp({
 		// We got incoming information.
 		console.log("Processing incoming event", event)
 		const handler = {
-		    capabilities: this.tellCapabilities,
+		    capabilities: this.askCapabilities,
 		    notify_capabilities: this.checkCapabilities,
 		}[event.data.action] ?? function () {
 		    console.log("No handler for this action", event)
@@ -46,7 +46,7 @@ createApp({
 		console.log("Visitor widget got unsolisited event", event)
 	    }
 	},
-	tellCapabilities(event) {
+	askCapabilities(event) {
 	    // Telling we want the messages
 	    event.data.response = { capabilities: caps }
 	    event.source.postMessage(event.data, "*")
