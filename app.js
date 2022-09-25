@@ -44,8 +44,12 @@ createApp({
 	},
 	tellCapabilities(event) {
 	    // Telling we want the messages
-	    event.data.response = { capabilities: ["m.capability.request_messages"] };
-	    event.source.postMessage(event.data, "*");
+	    event.data.response = { capabilities: ["m.capability.request_messages"] }
+	    event.source.postMessage(event.data, "*")
+
+	    // Collect references for later use.
+	    this.widgetId = event.data.widgetId
+	    this.chatWindow = event.source
 	},
 	checkCapabilities(event) {
 	    if (event.data.data.approved.includes("m.capability.request_messages")) {
@@ -55,7 +59,7 @@ createApp({
 		this.source = "REST API (Matrix-käyttöoikeus puuttuu)"
 	    }
 	    // Sending ack
-	    event.data.response = {}
+	    event.data.response = {success: true}
 	    event.source.postMessage(event.data, "*")
 	}
     }
