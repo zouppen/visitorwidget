@@ -56,7 +56,7 @@ createApp({
 	    this.chatWindow = event.source
 	},
 	checkCapabilities(event) {
-	    const granted = caps.every((cap) => event.data.data.approved.includes(cap));
+	    const granted = caps.every((cap) => event.data.data.approved.includes(cap))
 	    if (granted) {
 		// Matrix mode activated
 		this.source = "Matrix"
