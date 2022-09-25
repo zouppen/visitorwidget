@@ -17,13 +17,8 @@ createApp({
 	const params = new URLSearchParams(document.location.search)
 	this.widgetId = params.get("widgetId")
 	if (this.widgetId === null) {
-	    // Using https to fetch information perioidically
-	    var that = this
-	    setInterval(function () {
-		that.legacyFetchData.apply(that)
-	    }, 60000)
-	    // Do initial data fetch
-	    this.legacyFetchData()
+	    // Not used as Matrix widget, fallback to https
+	    this.startLegacyFetch()
 	} else {
 	    // Matrix mode: receiving events via Matrix.
 	    window.addEventListener("message", this.matrixIncoming, false)
@@ -32,9 +27,17 @@ createApp({
 	}
     },
     methods: {
-	async legacyFetchData() {
-	    this.lab = await (await fetch(API_URL)).json()
-	    this.lab.loading = false
+	startLegacyFetch() {
+	    var that = this
+	    async function updateVisitors() {
+		that.lab = await (await fetch(API_URL)).json()
+	    }
+	    // Set up recurring timer
+	    setInterval(function () {
+		updateVisitors()
+	    }, 60000)
+	    // Do initial data fetch
+	    updateVisitors()
 	},
 	matrixIncoming(event) {
 	    if (event.data.api === "fromWidget" && event.data.response !== undefined) {
@@ -75,6 +78,7 @@ createApp({
 		this.source = "Matrix"
 	    } else {
 		this.source = "REST API (Matrix-käyttöoikeus puuttuu)"
+		this.startLegacyFetch()
 	    }
 	    // Sending ack
 	    event.data.response = {success: true}
