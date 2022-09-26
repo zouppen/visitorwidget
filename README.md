@@ -1,5 +1,7 @@
 # Hackerspace widget
 
+![screenshot](https://user-images.githubusercontent.com/978376/192273239-947ea82d-94ba-4213-970e-e6fc63a14201.png)
+
 Shows real time information about the hackerspace. Created for
 [Hacklab Jyväskylä](https://jkl.hacklab.fi/).
 
