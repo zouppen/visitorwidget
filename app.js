@@ -1,11 +1,10 @@
 const API_URL = 'https://visitors.jkl.hacklab.fi/api/v1/visitors?format=json-v2'
-const { createApp } = Vue
 const caps = [
     "org.matrix.msc2762.receive.event:fi.hacklab.venue",
     "org.matrix.msc2762.receive.event:fi.hacklab.visitors",
 ]
 
-createApp({
+Vue.createApp({
     data() {
 	return {
 	    lab: { loading: true },
@@ -51,9 +50,9 @@ createApp({
 	    } else if (msg.data.api === "toWidget" && msg.data.response === undefined) {
 		// We got incoming information.
 		const handler = {
-		    capabilities: this.askCapabilities,
-		    notify_capabilities: this.checkCapabilities,
-		    send_event: this.handleEventPush,
+		    "capabilities": this.askCapabilities,
+		    "notify_capabilities": this.checkCapabilities,
+		    "send_event": this.handleEventPush,
 		}[msg.data.action] ?? function () {
 		    console.log("No handler for this request", msg)
 		}
@@ -102,7 +101,7 @@ createApp({
 	    msg.source.postMessage(msg.data, "*")
 	},
 	handleEvents(msg) {
-	    // Initial information asked. Dig the stuff and pass on.
+	    // Initial information got. Dig the stuff and pass on.
 	    for (const event of msg.data.response.events) {
 		this.handleEvent(event)
 	    }
