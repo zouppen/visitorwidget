@@ -21,8 +21,8 @@ Vue.createApp({
 	} else {
 	    // Matrix mode: receiving events via Matrix.
 	    window.addEventListener("message", this.postmaster, false)
-	    // The first message should be capabilities, hopefully
-	    // continuing from there.
+	    // The first message should be capabilities, so processing
+	    // hopefully continues in function "askCapabilities".
 	}
     },
     methods: {
@@ -71,7 +71,7 @@ Vue.createApp({
 	    this.chat = msg.source
 	},
 	askEvents(type, limit=1) {
-	    // Ask for the most recent message of given type
+	    // Ask for the most recent messages of given type
 	    this.chat.postMessage({
 		api: "fromWidget",
 		widgetId: this.widgetId,
