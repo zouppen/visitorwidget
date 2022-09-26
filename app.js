@@ -21,8 +21,8 @@ Vue.createApp({
 	} else {
 	    // Matrix mode: receiving events via Matrix.
 	    window.addEventListener("message", this.postmaster, false)
-	    // The first message should be capabilities, so processing
-	    // hopefully continues in function "askCapabilities".
+	    // The first message should be "capabilities", so
+	    // processing hopefully continues in function "askCapabilities".
 	}
     },
     methods: {
