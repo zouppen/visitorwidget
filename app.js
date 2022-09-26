@@ -60,7 +60,7 @@ createApp({
 		handler(msg)
 	    } else {
 		// Either echo from postMessage or something else
-		console.log("Visitor widget got unsolisited event", msg)
+		console.log("Visitor widget got unsolisited messeage", msg)
 	    }
 	},
 	askCapabilities(msg) {
@@ -110,9 +110,24 @@ createApp({
 	handleEventPush(msg) {
 	    // We got a lab state change. Pass to the actual parser.
 	    this.handleEvent(msg.data.data)
+
+	    // Sending ack
+	    msg.data.response = {success: true}
+	    msg.source.postMessage(msg.data, "*")
 	},
 	handleEvent(event) {
-	    console.log("Noniin.", event);
+	    if (event.type === "fi.hacklab.venue") {
+		this.lab.in_charge = event.content.inCharge
+		this.lab.open = event.content.isOpen
+		this.lab.empty = event.content.inCharge === null
+	    } else if (event.type === "fi.hacklab.visitors") {
+		this.lab.present = event.content.nicks.map(nick => ({nick: nick}))
+	    } else {
+		console.log("Unsolisited event", event)
+	    }
+	    // Enable view when we have all the data
+	    this.lab.loading = this.lab.present === undefined || this.lab.empty === undefined
+	    console.log("Visitor update", this.lab)
 	}
     }
 }).mount('#app')
