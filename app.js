@@ -27,14 +27,11 @@ Vue.createApp({
     },
     methods: {
 	startLegacyFetch() {
-	    var that = this
-	    async function updateVisitors() {
-		that.lab = await (await fetch(API_URL)).json()
+	    const updateVisitors = async () => {
+		this.lab = await (await fetch(API_URL)).json()
 	    }
 	    // Set up recurring timer
-	    setInterval(function () {
-		updateVisitors()
-	    }, 60000)
+	    setInterval(updateVisitors, 60000)
 	    // Do initial data fetch
 	    updateVisitors()
 	},
