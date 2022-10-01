@@ -16,32 +16,34 @@
     <img id="logo"
 	 :class="{ lab_empty: lab.empty, lab_not_open: !lab.empty && !lab.open }"
 	 src="https://jkl.hacklab.fi/wp-content/uploads/2021/11/logo-smooth-simplified-demo1.png">
-    <p v-if="lab.loading">Ladataan...</p>
-    <p v-if="!lab.loading && !lab.empty">
-      Hacklabilla ollaan paikalla. Vastuuhenkilö on <span id="in_charge">{{ lab.in_charge }}</span>.
-      <span v-if="lab.open">Ovet ovat <strong>auki</strong>, tervetuloa!</span>
-    </p>
-    <p v-if="lab.empty">
-      Hacklab on nyt tyhjä.
-    </p>
-    <template v-if="!lab.empty && lab.present.length !== 0">
-      <p>Paikalla:</p>
-      <ul>
-	<li v-for="visitor in lab.present">
-	  {{ visitor.nick }}
-	</li>
-      </ul>
-    </template>
-    <p v-if="!lab.loading">
-      <template v-if="!lab.empty">Tavoita ihmiset kerhotilassa</template>
-      <template v-if="lab.empty">Tavoita yhdistyksen hallitus</template>
-      soittamalla numeroon 09 3157 6906.
-    </p>
-    <address v-if="!lab.loading && !lab.empty">
-      Haluatko nimesi listaan? <a href="https://visitors.jkl.hacklab.fi/">Rekisteröidy!</a>
-    </address>
-    <p>Datalähde: {{ source }}</p>
-    <p style="display: none;">{{ widgetId }}</p>
+    <div id="kelluke">
+      <p v-if="lab.loading">Ladataan...</p>
+      <p v-if="!lab.loading && !lab.empty">
+	Hacklabilla ollaan paikalla. Vastuuhenkilö on <span id="in_charge">{{ lab.in_charge }}</span>.
+	<span v-if="lab.open">Ovet ovat <strong>auki</strong>, tervetuloa!</span>
+      </p>
+      <p v-if="lab.empty">
+	Hacklab on nyt tyhjä.
+      </p>
+      <template v-if="!lab.empty && lab.present.length !== 0">
+	<p>Paikalla:</p>
+	<ul>
+	  <li v-for="visitor in lab.present">
+	    {{ visitor.nick }}
+	  </li>
+	</ul>
+      </template>
+      <p v-if="!lab.loading">
+	<template v-if="!lab.empty">Tavoita ihmiset kerhotilassa</template>
+	<template v-if="lab.empty">Tavoita yhdistyksen hallitus</template>
+	soittamalla numeroon 09 3157 6906.
+      </p>
+      <address v-if="!lab.loading && !lab.empty">
+	Haluatko nimesi listaan? <a href="https://visitors.jkl.hacklab.fi/">Rekisteröidy!</a>
+      </address>
+      <p>Datalähde: {{ source }}</p>
+      <p style="display: none;">{{ widgetId }}</p>
+    </div>
   </div>
   <script src="app.js"></script>
 </body>

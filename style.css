@@ -10,15 +10,18 @@
     filter: hue-rotate(295deg);
 }
 
-#app {
-    max-width: 20em;
+#kelluke, #logo {
     margin-left: auto;
     margin-right: auto;
-    padding: 1em;
+}
+
+#kelluke {
+    max-width: 20em;
 }
 
 #logo {
-    width: 100%;
+    width: 20em;
+    max-width: 100%;
     display: block;
 }
 
@@ -31,4 +34,22 @@ body {
     font-size: 110%;
     background-color: #20252b;
     color: white;
+}
+
+@media screen and (min-width: 40em) {
+    #app {
+	display: grid;
+    }
+
+    #logo {
+	width: auto;
+	grid-column: 1/2;
+	margin-right: 0;
+	padding-top: 1em;
+    }
+
+    #kelluke {
+	grid-column: 2/2;
+	margin-left: 1em;
+    }
 }
